@@ -93,6 +93,31 @@ class MemAE(nn.Module):
     def decode(self, z):
         return self.decoder(z)
 
+
+class VanillaAE(nn.Module):
+    def __init__(
+        self, batch_size, chnum_in,
+        nf1=16, nf2=32, nf3=64, nf4=128, nf5=256):
+        
+        super(VanillaAE, self).__init__()
+
+        self.encoder = Encoder(batch_size, chnum_in, nf1, nf2, nf3, nf4, nf5) # Encoder
+        self.decoder = Decoder(batch_size, chnum_in, nf1, nf2, nf3, nf4, nf5) # Decoder
+        
+        
+    def forward(self, x):
+        latent_z = self.encoder(x)
+        rec_x = self.decoder(latent_z)
+        return rec_x
+
+    def encode(self, x):
+        latent_z = self.encoder(x)
+        return latent_z
+
+    def decode(self, z):
+        return self.decoder(z)
+
+
 def weights_init(m):
     classname = m.__class__.__name__
     # print(classname)
