@@ -38,7 +38,7 @@ if __name__ == "__main__":
     test_loader = torch.utils.data.DataLoader(mnist_test, batch_size=batch_size, shuffle=False,num_workers=1,drop_last=True)
 
     # memory augmented AE 
-    model = MemAE(batch_size, chnum_in_, mem_dim_in, shrink_thres=shrink_threshold)
+    model = MemAE(chnum_in_, mem_dim_in, shrink_thres=shrink_threshold)
     model.apply(weights_init)
     model.to(device)
 
