@@ -74,7 +74,7 @@ class MemAE(nn.Module):
         super(MemAE, self).__init__()
 
         self.encoder = Encoder(chnum_in, nf1, nf2, nf3, nf4, nf5) # Encoder
-        self.mem_rep = MemModule(mem_dim=mem_dim, fea_dim=256, shrink_thres=shrink_thres)
+        self.mem_rep = MemModule(mem_dim=mem_dim, fea_dim=nf5, shrink_thres=shrink_thres)
         self.decoder = Decoder(chnum_in, nf1, nf2, nf3, nf4, nf5) # Decoder
         
         
