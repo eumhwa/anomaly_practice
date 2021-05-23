@@ -7,7 +7,7 @@ from torch.autograd import Variable
 from torch.nn.parameter import Parameter
 
 class Encoder(nn.Module):
-    def __init__(self, batch_size, chnum_in, nf1, nf2, nf3, nf4, nf5):
+    def __init__(self, chnum_in, nf1, nf2, nf3, nf4, nf5):
         super(Encoder,self).__init__()
         self.block1 = nn.Sequential(
                         nn.Conv2d(chnum_in, nf1, 3, padding=1),     
@@ -39,7 +39,7 @@ class Encoder(nn.Module):
         
 
 class Decoder(nn.Module):
-    def __init__(self, batch_size, chnum_in, nf1, nf2, nf3, nf4, nf5):
+    def __init__(self, chnum_in, nf1, nf2, nf3, nf4, nf5):
         super(Decoder,self).__init__()
         self.block1 = nn.Sequential(
                         nn.ConvTranspose2d(nf5, nf4, 3, 1, 1),                 
@@ -73,9 +73,9 @@ class MemAE(nn.Module):
         
         super(MemAE, self).__init__()
 
-        self.encoder = Encoder(batch_size, chnum_in, nf1, nf2, nf3, nf4, nf5) # Encoder
+        self.encoder = Encoder(chnum_in, nf1, nf2, nf3, nf4, nf5) # Encoder
         self.mem_rep = MemModule(mem_dim=mem_dim, fea_dim=256, shrink_thres=shrink_thres)
-        self.decoder = Decoder(batch_size, chnum_in, nf1, nf2, nf3, nf4, nf5) # Decoder
+        self.decoder = Decoder(chnum_in, nf1, nf2, nf3, nf4, nf5) # Decoder
         
         
     def forward(self, x):
@@ -96,13 +96,13 @@ class MemAE(nn.Module):
 
 class VanillaAE(nn.Module):
     def __init__(
-        self, batch_size, chnum_in,
+        self, chnum_in,
         nf1=16, nf2=32, nf3=64, nf4=128, nf5=256):
         
         super(VanillaAE, self).__init__()
 
-        self.encoder = Encoder(batch_size, chnum_in, nf1, nf2, nf3, nf4, nf5) # Encoder
-        self.decoder = Decoder(batch_size, chnum_in, nf1, nf2, nf3, nf4, nf5) # Decoder
+        self.encoder = Encoder(chnum_in, nf1, nf2, nf3, nf4, nf5) # Encoder
+        self.decoder = Decoder(chnum_in, nf1, nf2, nf3, nf4, nf5) # Decoder
         
         
     def forward(self, x):
