@@ -68,7 +68,7 @@ class Decoder(nn.Module):
 
 class MemAE(nn.Module):
     def __init__(
-        self, batch_size, chnum_in, mem_dim, shrink_thres=0.0025,
+        self, chnum_in, mem_dim, shrink_thres=0.0025,
         nf1=16, nf2=32, nf3=64, nf4=128, nf5=256):
         
         super(MemAE, self).__init__()
