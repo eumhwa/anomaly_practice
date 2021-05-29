@@ -18,6 +18,9 @@ BATCH_SIZE = 4
 
 min_filter_size = 2 # feature aggregation parameter
 
+mem_dim_in = 512
+entropy_loss_weight = 0.0002
+
 
 def aggregate_features(feature, n_in=256, n_out=2, n_downsample=3, pooling="max"):
   
@@ -91,20 +94,17 @@ for i, f in enumerate(features):
         l3 = torch.cat([l3, f[2]], dim=0)
         l4 = torch.cat([l4, f[3]], dim=0)
 
-pooled_down_l1 = aggregate_features(l1, l1.shape[1], min_filter_size, n_downsample=4)
-pooled_down_l2 = aggregate_features(l2, l2.shape[1], min_filter_size*2, n_downsample=3)
-pooled_down_l3 = aggregate_features(l3, l3.shape[1], min_filter_size*4, n_downsample=2)
-pooled_down_l4 = aggregate_features(l4, l4.shape[1], min_filter_size*8, n_downsample=1)
+pooled_down_l1 = aggregate_features(l1, l1.shape[1], min_filter_size, n_downsample=3)
+pooled_down_l2 = aggregate_features(l2, l2.shape[1], min_filter_size*2, n_downsample=2)
+pooled_down_l3 = aggregate_features(l3, l3.shape[1], min_filter_size*4, n_downsample=1)
+pooled_down_l4 = aggregate_features(l4, l4.shape[1], min_filter_size*8, n_downsample=0)
 
 feature_stack = torch.cat([pooled_down_l1, pooled_down_l2, pooled_down_l3, pooled_down_l4], dim=1)
 feature_loader = DataLoader(feature_stack, batch_size=BATCH_SIZE, shuffle=False)
 print(f"feature input dimension of MemAE: {feature_stack.shape}")
 
 
-chnum_in_ = feature_stack.shape[1]
-mem_dim_in = 512
-
-model = MemAE(chnum_in_, mem_dim_in, shrink_thres=0.0025, nf1=32, nf2=64, nf3=128, nf4=256, nf5=512)
+model = MemAE(feature_stack.shape[1], mem_dim_in, shrink_thres=0.0025, nf1=32, nf2=64, nf3=128, nf4=256, nf5=512)
 #model = VanillaAE(chnum_in_, nf1=32, nf2=64, nf3=128, nf4=256, nf5=512)
 
 model.apply(weights_init)
@@ -115,15 +115,13 @@ entropy_loss_func = EntropyLossEncap().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
 
 model.train()
-entropy_loss_weight = 0.0002
-
 for epoch_idx in range(80):
     for batch_idx, data in enumerate(feature_loader):
         data = data.to(device)
 
         recon_res = model(data)
         recon_data = recon_res[0]
-        print(f"data shape: {data.shape} and recon_data shape: {recon_data.shape}")
+        #print(f"data shape: {data.shape} and recon_data shape: {recon_data.shape}")
         
         att_w = recon_res[1]
         loss = recon_loss_func(recon_data, data)
