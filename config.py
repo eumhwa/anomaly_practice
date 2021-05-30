@@ -20,8 +20,8 @@ def get_params_AD():
     parser = argparse.ArgumentParser(description='config parameters for anomaly detection')
 
     parser.add_argument('--data_path', type=str, default="./datasets/screw", help='training device')
-    parser.add_argument('--width', typ=int, default=384, help='image width')
-    parser.add_argument('--height', typ=int, default=384, help='image height')
+    parser.add_argument('--width', type=int, default=384, help='image width')
+    parser.add_argument('--height', type=int, default=384, help='image height')
     parser.add_argument('--epoch', type=int, default=100, help='training epochs')
     parser.add_argument('--batch_size', type=int, default=4, help='training mini batch size')
     parser.add_argument('--lr', type=float, default=0.00003, help='training learning rate')
