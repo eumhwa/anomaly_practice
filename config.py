@@ -19,7 +19,7 @@ def get_params_mnist():
 def get_params_AD():
     parser = argparse.ArgumentParser(description='config parameters for anomaly detection')
 
-    parser.add_argument('--data_path', type=str, default="./datasets/screw", help='training device')
+    parser.add_argument('--data_path', type=str, default="./datasets/screw", help='training dataset path')
     parser.add_argument('--width', type=int, default=384, help='image width')
     parser.add_argument('--height', type=int, default=384, help='image height')
     parser.add_argument('--epoch', type=int, default=100, help='training epochs')
@@ -33,5 +33,6 @@ def get_params_AD():
     parser.add_argument('--ckpt_name', type=str, default="memAE_MNIST.pt", help='checkpoint name')
     parser.add_argument('--nf1', type=int, default=32, help='number of first filters')
     parser.add_argument('--min_filter_size', type=int, default=2, help='number of desired size of filters at first residual block')
+    parser.add_argument('--model', type=str, default="MemAE", choices=['MemAE', 'AE'], help='architecture of Autoencoder')
 
     return parser
