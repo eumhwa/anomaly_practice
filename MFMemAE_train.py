@@ -122,10 +122,12 @@ if __name__ == "__main__":
     nf1, nf2, nf3, nf4, nf5 = [args.nf1 * (2**k) for k in range(5)]
     print(f"Filter size list: {[nf1, nf2, nf3, nf4, nf5]}")
 
-    model = MemAE(
-        feature_stack.shape[1], args.mem_dim_in, shrink_thres=args.shrink_threshold, 
-        nf1=nf1, nf2=nf2, nf3=nf3, nf4=nf4, nf5=nf5)
-    #model = VanillaAE(chnum_in_, nf1=32, nf2=64, nf3=128, nf4=256, nf5=512)
+    if args.model == "MemAE":
+        model = MemAE(
+            feature_stack.shape[1], args.mem_dim_in, shrink_thres=args.shrink_threshold, 
+            nf1=nf1, nf2=nf2, nf3=nf3, nf4=nf4, nf5=nf5)
+    elif args.model == "AE":
+        model = VanillaAE(chnum_in_, nf1=32, nf2=64, nf3=128, nf4=256, nf5=512)
 
     model.apply(weights_init)
     model.to(args.device)
