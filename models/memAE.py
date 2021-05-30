@@ -6,6 +6,8 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 from torch.nn.parameter import Parameter
 
+from memory_module import *
+
 class Encoder(nn.Module):
     def __init__(self, chnum_in, nf1, nf2, nf3, nf4, nf5):
         super(Encoder,self).__init__()
