@@ -64,7 +64,7 @@ if __name__ == "__main__":
     model.train()
     print("Training start --")
     for epoch_idx in range(args.epoch):
-        for batch_idx, data in enumerate(train_loader):
+        for batch_idx, (data, _) in enumerate(train_loader):
             data = data.to(args.device)
 
             recon_res = model(data)
