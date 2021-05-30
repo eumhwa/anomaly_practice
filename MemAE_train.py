@@ -10,6 +10,8 @@ from torch.utils.data import DataLoader
 from models.memAE import *
 from models.memory_module import *
 
+from config import get_params_AD
+
 data_path = "./datasets/screw"
 IMG_SIZE = (384, 384)
 BATCH_SIZE = 4

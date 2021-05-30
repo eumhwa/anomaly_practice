@@ -14,15 +14,6 @@ from models.resnet import *
 
 from config import get_params_AD
 
-data_path = "./datasets/screw"
-IMG_SIZE = (384, 384)
-BATCH_SIZE = 4
-
-min_filter_size = 2 # feature aggregation parameter
-
-mem_dim_in = 512
-entropy_loss_weight = 0.0002
-
 
 def aggregate_features(feature, n_in=256, n_out=2, n_downsample=3, pooling="max"):
   
@@ -40,7 +31,7 @@ def aggregate_features(feature, n_in=256, n_out=2, n_downsample=3, pooling="max"
   return down_ft
 
 
-parser = get_params_mnist()
+parser = get_params_AD()
 args = parser.parse_args()
 
 IMG_SIZE = (args.width, args.height)
