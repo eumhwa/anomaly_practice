@@ -16,7 +16,7 @@ from models.memory_module import *
 
 from config import get_params_mnist
 
-def load_mnist():
+def load_mnist(args):
     # MNIST dataset
     mnist_train = dset.MNIST("./", train=True, transform=transforms.ToTensor(), target_transform=None, download=True)
     mnist_test = dset.MNIST("./", train=False, transform=transforms.ToTensor(), target_transform=None, download=True)
@@ -28,10 +28,10 @@ def load_mnist():
 
 if __name__ == "__main__":
     
-    parser = get_params_mnist
+    parser = get_params_mnist()
     args = parser.parse_args()
 
-    train_loader, test_loader = load_mnist()
+    train_loader, test_loader = load_mnist(args)
 
     # memory augmented AE 
     model = MemAE(args.chnum_in, args.mem_dim_in, shrink_thres=args.shrink_threshold)

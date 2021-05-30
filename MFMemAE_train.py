@@ -12,6 +12,8 @@ from models.memAE import *
 from models.memory_module import *
 from models.resnet import *
 
+from config import get_params_AD
+
 data_path = "./datasets/screw"
 IMG_SIZE = (384, 384)
 BATCH_SIZE = 4
@@ -38,6 +40,11 @@ def aggregate_features(feature, n_in=256, n_out=2, n_downsample=3, pooling="max"
   return down_ft
 
 
+parser = get_params_mnist()
+args = parser.parse_args()
+
+IMG_SIZE = (args.width, args.height)
+
 trans = transforms.Compose(
         [
             transforms.Resize(IMG_SIZE),
@@ -46,22 +53,22 @@ trans = transforms.Compose(
         ]
     )
 
-train_dataset = ImageFolder(root=os.path.join(data_path, "train"), transform=trans)
-test_dataset = ImageFolder(root=os.path.join(data_path, "test"), transform=trans)
+train_dataset = ImageFolder(root=os.path.join(args.data_path, "train"), transform=trans)
+test_dataset = ImageFolder(root=os.path.join(args.data_path, "test"), transform=trans)
 
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
 
-resnet = resnet50(pretrained=True).to(device)
+resnet = resnet50(pretrained=True).to(args.device)
 learner = BYOL(resnet, image_size = IMG_SIZE[0], hidden_layer = 'avgpool')
-opt = torch.optim.Adam(learner.parameters(), lr=3e-5)
+opt = torch.optim.Adam(learner.parameters(), lr=args.lr)
 
 # train resnet via BYOL
-for epoch in range(EPOCHS):
+for epoch in range(args.epoch):
     loss_history=[]
     for data, _ in train_loader:
-        images = data.to(device)
+        images = data.to(args.device)
         loss = learner(images)
         loss_float = loss.detach().cpu().numpy().tolist()
         loss_history.append(loss_float)
@@ -79,7 +86,7 @@ resnet.eval()
 with torch.no_grad():
     features = []
     for data, _ in train_loader:
-      data = data.to(device)
+      data = data.to(args.device)
       _, feature_lst = resnet(data)
       features.append(feature_lst)
 
@@ -94,30 +101,32 @@ for i, f in enumerate(features):
         l3 = torch.cat([l3, f[2]], dim=0)
         l4 = torch.cat([l4, f[3]], dim=0)
 
-pooled_down_l1 = aggregate_features(l1, l1.shape[1], min_filter_size, n_downsample=3)
-pooled_down_l2 = aggregate_features(l2, l2.shape[1], min_filter_size*2, n_downsample=2)
-pooled_down_l3 = aggregate_features(l3, l3.shape[1], min_filter_size*4, n_downsample=1)
-pooled_down_l4 = aggregate_features(l4, l4.shape[1], min_filter_size*8, n_downsample=0)
+pooled_down_l1 = aggregate_features(l1, l1.shape[1], args.min_filter_size, n_downsample=3)
+pooled_down_l2 = aggregate_features(l2, l2.shape[1], args.min_filter_size*2, n_downsample=2)
+pooled_down_l3 = aggregate_features(l3, l3.shape[1], args.min_filter_size*4, n_downsample=1)
+pooled_down_l4 = aggregate_features(l4, l4.shape[1], args.min_filter_size*8, n_downsample=0)
 
 feature_stack = torch.cat([pooled_down_l1, pooled_down_l2, pooled_down_l3, pooled_down_l4], dim=1)
-feature_loader = DataLoader(feature_stack, batch_size=BATCH_SIZE, shuffle=False)
+feature_loader = DataLoader(feature_stack, batch_size=args.batch_size, shuffle=False)
 print(f"feature input dimension of MemAE: {feature_stack.shape}")
 
-
-model = MemAE(feature_stack.shape[1], mem_dim_in, shrink_thres=0.0025, nf1=32, nf2=64, nf3=128, nf4=256, nf5=512)
+nf1, nf2, nf3, nf4, nf5 = [args.nf1 * (2**k) for k in range(5)]
+model = MemAE(
+    feature_stack.shape[1], args.mem_dim_in, shrink_thres=args.shrink_thres, 
+    nf1=nf1, nf2=nf2, nf3=nf3, nf4=nf4, nf5=nf5)
 #model = VanillaAE(chnum_in_, nf1=32, nf2=64, nf3=128, nf4=256, nf5=512)
 
 model.apply(weights_init)
-model.to(device)
+model.to(args.device)
 
 recon_loss_func = nn.MSELoss().to(device)
 entropy_loss_func = EntropyLossEncap().to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
+optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
 model.train()
-for epoch_idx in range(80):
+for epoch_idx in range(args.epoch):
     for batch_idx, data in enumerate(feature_loader):
-        data = data.to(device)
+        data = data.to(args.device)
 
         recon_res = model(data)
         recon_data = recon_res[0]
@@ -128,7 +137,7 @@ for epoch_idx in range(80):
         recon_loss_val = loss.item()
         entropy_loss = entropy_loss_func(att_w)
         entropy_loss_val = entropy_loss.item()
-        loss = loss + entropy_loss_weight * entropy_loss
+        loss = loss + args.entropy_loss_weight * entropy_loss
         loss_val = loss.item()
         
         optimizer.zero_grad()
