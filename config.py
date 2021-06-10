@@ -36,6 +36,7 @@ def get_train_params():
     parser.add_argument('--min_filter_size', type=int, default=2, help='number of desired size of filters at first residual block')
     parser.add_argument('--model', type=str, default="MemAE", choices=['MemAE', 'AE'], help='architecture of Autoencoder')
     parser.add_argument('--ckpt_name', type=str, default="memAE_MNIST.pt", help='checkpoint name')
+
     return parser
 
 def get_inference_params():
@@ -55,5 +56,6 @@ def get_inference_params():
     parser.add_argument('--min_filter_size', type=int, default=2, help='number of desired size of filters at first residual block')
     parser.add_argument('--model', type=str, default="MemAE", choices=['MemAE', 'AE'], help='architecture of Autoencoder')
     parser.add_argument('--anomaly_threshold', type=float, default=0.1, help='threshold for anomaly score')
+    parser.add_argument('--viz', action="store_true", help='saving inference heatmap image')
     
     return parser

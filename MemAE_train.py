@@ -1,5 +1,5 @@
 ## Multi-scale feature based MemAE trainer
-import os
+import os, time
 import torch
 import torch.nn as nn
 
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     parser = get_train_params()
     args = parser.parse_args()
     print(args)
-    
+
     # loading datasets
     IMG_SIZE = (args.width, args.height)
     trans = get_transform(IMG_SIZE)
@@ -42,6 +42,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     model.train()
+    tic = time.time()
     print("Training start --")
     for epoch_idx in range(args.epoch):
         for batch_idx, (data, _) in enumerate(train_loader):
@@ -65,8 +66,10 @@ if __name__ == "__main__":
         if epoch_idx % 5 == 0:
             print(f"epoch: {epoch_idx} , total loss: {loss}")
 
-
+    toc = time.itme()
     print(f"End Training ---")
+    print(f"Training time elapsed: {abs(tic-toc)}")
+    
     if args.save_ckpt:
         torch.save(model.state_dict(), args.model_path)
     
