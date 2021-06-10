@@ -39,7 +39,7 @@ def load_MVTecAD_dataset(dataset_path, is_train, batch_size=1, transform=None):
     dataset = ImageFolder(root=dataset_path, transform=target_transform)
     return DataLoader(dataset, batch_size=batch_size, shuffle=is_train)        
 
-class CustomDataset(Datset):
+class CustomDataset(Dataset):
     # Custom Dataset class    
     def __init(self, file_list, labels, transform=None):
         self.file_list = file_list
