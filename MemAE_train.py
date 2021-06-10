@@ -14,7 +14,8 @@ if __name__ == "__main__":
 
     parser = get_train_params()
     args = parser.parse_args()
-
+    print(args)
+    
     # loading datasets
     IMG_SIZE = (args.width, args.height)
     trans = get_transform(IMG_SIZE)

@@ -13,6 +13,7 @@ if __name__ == "__main__":
     
     parser = get_inference_params()
     args = parser.parse_args()
+    print(args)
 
     # loading datasets
     IMG_SIZE = (args.width, args.height)
