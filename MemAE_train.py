@@ -69,9 +69,10 @@ if __name__ == "__main__":
     toc = time.itme()
     print(f"End Training ---")
     print(f"Training time elapsed: {abs(tic-toc)}")
-    
+
     if args.save_ckpt:
         torch.save(model.state_dict(), args.model_path)
+        print("Model saved at: ", args.model_path)
     
     
 

@@ -32,6 +32,9 @@ if __name__ == "__main__":
         args.dataset_path, is_train=False, batch_size=args.batch_size, transform=trans)
     
     # loading CKPT
+    nf1, nf2, nf3, nf4, nf5 = [args.nf1 * (2**k) for k in range(5)]
+    print(f"Filter size list: {[nf1, nf2, nf3, nf4, nf5]}")
+
     if args.model == "MemAE":
         model = MemAE(
             args.chnum_in, args.mem_dim_in, shrink_thres=args.shrink_threshold, 
@@ -42,6 +45,7 @@ if __name__ == "__main__":
 
     ckpt = torch.load(args.model_path, map_location=args.device)
     model.load_state_dict(ckpt)
+    print("Model loaded successfully ---")
 
     model = model.to(args.device)
     recon_loss_func = nn.MSELoss().to(args.device)

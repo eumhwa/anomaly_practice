@@ -45,7 +45,7 @@ def get_inference_params():
     parser.add_argument('--dataset_path', type=str, default="./datasets/screw", help='dataset path')
     parser.add_argument('--width', type=int, default=384, help='image width')
     parser.add_argument('--height', type=int, default=384, help='image height')
-    parser.add_argument('--batch_size', type=int, default=4, help='mini batch size')
+    parser.add_argument('--batch_size', type=int, default=1, help='mini batch size')
     parser.add_argument('--chnum_in', type=int, default=3, help='size of input channel')
     parser.add_argument('--mem_dim_in', type=int, default=512, help='dimension of memory module')
     parser.add_argument('--shrink_threshold', type=float, default=0.0025, help='hard shrinkage parameter for memory modeule')
