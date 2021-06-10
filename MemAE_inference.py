@@ -12,7 +12,7 @@ from utils import *
 def get_acc(ys, yhats):
     res = []
     for y, yhat in zip(ys, yhats):
-        if y === yhat:
+        if y == yhat:
             res.append(1)
         else:
             res.append(0)
