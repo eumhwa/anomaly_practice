@@ -19,7 +19,7 @@ def get_params_mnist():
 def get_train_params():
     parser = argparse.ArgumentParser(description='config parameters for anomaly detection')
 
-    parser.add_argument('--datasest_path', type=str, default="./datasets/screw", help='inference dataset path')
+    parser.add_argument('--dataset_path', type=str, default="./datasets/screw", help='inference dataset path')
     parser.add_argument('--width', type=int, default=384, help='image width')
     parser.add_argument('--height', type=int, default=384, help='image height')
     parser.add_argument('--epoch', type=int, default=100, help='training epochs')
