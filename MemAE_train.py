@@ -12,7 +12,7 @@ from utils import *
 
 if __name__ == "__main__": 
 
-    parser = get_paramsget_train_params()
+    parser = get_train_params()
     args = parser.parse_args()
 
     # loading datasets
