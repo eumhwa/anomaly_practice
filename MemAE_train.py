@@ -2,45 +2,26 @@
 import os
 import torch
 import torch.nn as nn
-import torchvision.transforms as transforms
-
-from torchvision.datasets import ImageFolder
-from torch.utils.data import DataLoader
 
 from models.memAE import *
 from models.memory_module import *
 
-from config import get_params_AD
-
-
-def load_dataset(args, trans):
-    train_dataset = ImageFolder(root=os.path.join(args.data_path, "train"), transform=trans)
-    test_dataset = ImageFolder(root=os.path.join(args.data_path, "test"), transform=trans)
-
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
-
-    return train_loader, test_loader
+from config import get_train_params
+from utils import *
 
 
 if __name__ == "__main__": 
 
-    parser = get_params_AD()
+    parser = get_paramsget_train_params()
     args = parser.parse_args()
 
+    # loading datasets
     IMG_SIZE = (args.width, args.height)
-
-    trans = transforms.Compose(
-            [
-                transforms.Resize(IMG_SIZE),
-                transforms.ToTensor(),
-                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-            ]
-        )
-
-    # training resnet using BYOL and extracting multi-scale features
-    train_loader, test_loader = load_dataset(args, trans=trans)
+    trans = get_transform(IMG_SIZE)
+    train_loader = load_MVTecAD_dataset(
+        args.dataset_path, is_train=True, batch_size=args.batch_size, transform=trans)
     
+    # model settings -- 
     nf1, nf2, nf3, nf4, nf5 = [args.nf1 * (2**k) for k in range(5)]
     print(f"Filter size list: {[nf1, nf2, nf3, nf4, nf5]}")
 
@@ -54,6 +35,7 @@ if __name__ == "__main__":
     model.apply(weights_init)
     model.to(args.device)
 
+    # training options
     recon_loss_func = nn.MSELoss().to(args.device)
     entropy_loss_func = EntropyLossEncap().to(args.device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
@@ -83,6 +65,9 @@ if __name__ == "__main__":
             print(f"epoch: {epoch_idx} , total loss: {loss}")
 
 
-
+    print(f"End Training ---")
+    if args.save_ckpt:
+        torch.save(model.state_dict(), args.model_path)
+    
     
 
