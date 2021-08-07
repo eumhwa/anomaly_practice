@@ -1,4 +1,3 @@
-## Multi-scale feature based MemAE trainer
 import os, time
 import torch
 import torch.nn as nn
