@@ -1,8 +1,8 @@
 # anomaly detection examples
 
 ## Memory augmented AutoEncoder
-    - 비정상 입력에 대해서도 정상에 가까운 출력을 만들어 anomaly score를 높여주기 위해 memory module을 사용한 autoencoder
-    - encoder를 거쳐 계산된 code가 정상패턴이 기록된 memory module과 attention 연산을 하여 새로운 code를 계산하고 이를 decoding 하는 방법
+비정상 입력에 대해서도 정상에 가까운 출력을 만들어 anomaly score를 높여주기 위해 memory module을 사용한 autoencoder
+encoder를 거쳐 계산된 code가 정상패턴이 기록된 memory module과 attention 연산을 하여 새로운 code를 계산하고 이를 decoding 하는 방법
 
 ## Citation
 
