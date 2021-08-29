@@ -42,7 +42,7 @@ def load_MVTecAD_dataset(dataset_path, is_train, batch_size=1, transform=None):
 
 class CustomDataset(Dataset):
     # Custom Dataset class    
-    def __init(self, file_list, labels, transform=None):
+    def __init__(self, file_list, labels, transform=None):
         self.file_list = file_list
         self.labels = labels
         self.transform = transform
